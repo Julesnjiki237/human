@@ -1,0 +1,37 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx tsc *)",
+      "Bash(cat tailwind.config.js)",
+      "Bash(cat tailwind.config.ts)",
+      "Skill(run)",
+      "Read(//tmp/**)",
+      "Bash(curl -sf http://localhost:5173 -o /dev/null -w \"%{http_code}\\\\n\")",
+      "Bash(npx --no-install playwright --version)",
+      "Bash(npm install *)",
+      "Bash(curl -sf http://localhost:5174/)",
+      "Bash(echo \"EXIT:$?\")",
+      "Bash(curl -sf http://localhost:5174/ -o /dev/null -w \"dev server status: %{http_code}\\\\n\")",
+      "Bash(python3 -c \"import os; print\\(os.path.islink\\('node_modules/lucide-react'\\)\\)\")",
+      "Bash(pkill -f \"vite\")",
+      "Bash(pkill -f \"npm run dev\")",
+      "Bash(timeout 20 pnpm run dev)",
+      "Bash(curl -sf http://localhost:5173/ -o /dev/null -w \"5173: %{http_code}\\\\n\")",
+      "Bash(curl -sf http://localhost:5174/ -o /dev/null -w \"5174: %{http_code}\\\\n\")",
+      "Bash(tasklist //FI \"IMAGENAME eq node.exe\")",
+      "Bash(rm -rf node_modules)",
+      "Bash(pnpm install *)",
+      "Bash(timeout 15 pnpm run dev)",
+      "Bash(curl -s \"http://localhost:5174/src/App.tsx\" -o /dev/null -w \"App.tsx transform: %{http_code}\\\\n\")",
+      "Bash(curl -s \"http://localhost:5174/node_modules/.vite/deps/lucide-react.js\" -o /tmp/lucide-check.js -w \"lucide-react bundle: %{http_code}\\\\n\")",
+      "Bash(kill %1)",
+      "Bash(curl -s \"http://localhost:5174/\" -o /dev/null -w \"root: %{http_code}\\\\n\")",
+      "Bash(curl -s \"http://localhost:5174/src/App.tsx\" -o /dev/null -w \"App.tsx: %{http_code}\\\\n\")",
+      "Bash(curl -s \"http://localhost:5174/src/App.tsx\")",
+      "Bash(curl -s \"http://localhost:5174/node_modules/.vite/deps/lucide-react.js\" -o /dev/null -w \"lucide-react optimized bundle: %{http_code}\\\\n\")",
+      "Bash(curl -s \"http://localhost:5174/@fs/F:/Mes%20projets/project-bolt-sb1-lbgmecrh%20\\(2\\)/Humandev/node_modules/.pnpm/lucide-react@0.344.0_react@18.3.1/node_modules/lucide-react/dist/esm/icons/dog.js\" -o /dev/null -w \"dog.js via vite: %{http_code}\\\\n\")",
+      "Bash(taskkill //F //IM node.exe //FI \"WINDOWTITLE eq none\")",
+      "Bash(netstat -ano)"
+    ]
+  }
+}
