@@ -421,7 +421,7 @@ function EventForm({
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               rows={4}
-              maxLength={1000}
+              maxLength={4000}
               className="w-full rounded-xl border border-gray-200 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/40 resize-none"
               placeholder="Décrivez l'évènement, le contexte, les bénéficiaires..."
             />
