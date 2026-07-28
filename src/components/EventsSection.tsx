@@ -98,12 +98,10 @@ export default function EventsSection() {
     return (
       <article
         key={event.id}
-        className="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl hover:shadow-brand-500/10 hover:-translate-y-1 transition-all duration-300 border border-gray-100 hover:border-brand-100"
+        onClick={() => setLightbox(event)}
+        className="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl hover:shadow-brand-500/10 hover:-translate-y-1 transition-all duration-300 border border-gray-100 hover:border-brand-100 cursor-pointer"
       >
-        <button
-          onClick={() => setLightbox(event)}
-          className="relative block w-full aspect-[4/3] overflow-hidden bg-gray-100 cursor-zoom-in"
-        >
+        <div className="relative w-full aspect-[4/3] overflow-hidden bg-gray-100">
           {cover ? (
             <img
               src={cover.image_url}
@@ -120,7 +118,7 @@ export default function EventsSection() {
               <Images size={12} />+{extraCount}
             </span>
           )}
-        </button>
+        </div>
         <div className="p-5">
           <div className="flex items-center gap-2 text-xs text-gray-400 mb-2">
             <Calendar size={13} />
@@ -132,14 +130,20 @@ export default function EventsSection() {
           {session && (
             <div className="mt-4 flex items-center gap-4">
               <button
-                onClick={() => setEditingEvent(event)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setEditingEvent(event);
+                }}
                 className="inline-flex items-center gap-1.5 text-xs font-medium text-brand-500 hover:text-brand-600"
               >
                 <Pencil size={13} />
                 {t.events.edit}
               </button>
               <button
-                onClick={() => handleDelete(event)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleDelete(event);
+                }}
                 disabled={deletingId === event.id}
                 className="inline-flex items-center gap-1.5 text-xs font-medium text-red-500 hover:text-red-700 disabled:opacity-50"
               >
