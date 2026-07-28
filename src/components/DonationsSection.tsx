@@ -1,6 +1,7 @@
 import { Copy, Check, Gift, HandCoins } from 'lucide-react';
 import { useState } from 'react';
 import Reveal from './Reveal';
+import { useLanguage } from '../context/LanguageContext';
 
 const methods = [
   {
@@ -24,6 +25,7 @@ const methods = [
 ];
 
 export default function DonationsSection() {
+  const { t } = useLanguage();
   const [copied, setCopied] = useState<string | null>(null);
 
   const copy = (value: string) => {
@@ -43,16 +45,13 @@ export default function DonationsSection() {
         <Reveal className="text-center mb-14">
           <span className="inline-flex items-center gap-1.5 text-leaf-500 font-semibold text-sm uppercase tracking-widest">
             <Gift size={14} />
-            Soutenez notre action
+            {t.donations.eyebrow}
           </span>
           <h2 className="font-display mt-3 text-3xl sm:text-4xl font-bold text-brand-500">
-            Faire un don
+            {t.donations.title}
           </h2>
           <div className="mt-4 mx-auto w-16 h-1 bg-leaf-500 rounded-full"></div>
-          <p className="mt-6 text-gray-500 max-w-2xl mx-auto text-lg">
-            Votre soutien nous permet de poursuivre nos actions sur le terrain auprès des
-            communautés vulnérables de l'Extrême-Nord du Cameroun. Chaque contribution compte.
-          </p>
+          <p className="mt-6 text-gray-500 max-w-2xl mx-auto text-lg">{t.donations.subtitle}</p>
         </Reveal>
 
         <div className="grid sm:grid-cols-2 gap-6">
@@ -71,21 +70,21 @@ export default function DonationsSection() {
                 </div>
                 <div>
                   <h3 className="font-bold text-lg text-brand-500">{m.name}</h3>
-                  <p className="text-xs text-gray-500">Mobile Money</p>
+                  <p className="text-xs text-gray-500">{t.donations.mobileMoney}</p>
                 </div>
               </div>
 
               <div className="bg-white/70 rounded-2xl p-4 space-y-3">
                 <div>
                   <p className="text-xs text-gray-400 font-medium uppercase tracking-wide mb-1">
-                    Numéro
+                    {t.donations.numberLabel}
                   </p>
                   <div className="flex items-center justify-between gap-2">
                     <span className="font-semibold text-gray-800 text-lg">{m.number}</span>
                     <button
                       onClick={() => copy(m.raw)}
                       className="p-2 rounded-lg text-gray-400 hover:text-brand-500 hover:bg-brand-500/5 transition-colors"
-                      title="Copier le numéro"
+                      title={t.donations.copyTitle}
                     >
                       {copied === m.raw ? (
                         <Check size={16} className="text-leaf-500" />
@@ -97,7 +96,7 @@ export default function DonationsSection() {
                 </div>
                 <div className="pt-2 border-t border-gray-100">
                   <p className="text-xs text-gray-400 font-medium uppercase tracking-wide mb-1">
-                    Au nom de
+                    {t.donations.holderLabel}
                   </p>
                   <p className="text-sm font-medium text-gray-700">{m.holder}</p>
                 </div>
@@ -109,8 +108,7 @@ export default function DonationsSection() {
 
         <p className="mt-10 flex items-center justify-center gap-2 text-center text-sm text-gray-500 max-w-xl mx-auto">
           <HandCoins size={16} className="text-leaf-500 flex-shrink-0" />
-          Merci pour votre générosité. Vos dons alimentent directement nos programmes
-          humanitaires et de développement.
+          {t.donations.thanks}
         </p>
       </div>
     </section>

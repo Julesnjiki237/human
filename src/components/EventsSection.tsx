@@ -15,14 +15,16 @@ import {
 } from 'lucide-react';
 import { supabase, type Event, type EventImage } from '../lib/supabase';
 import { useAuth } from '../context/AuthContext';
+import { useLanguage } from '../context/LanguageContext';
+import type { Lang } from '../i18n/translations';
 import Reveal from './Reveal';
 
 function todayStr() {
   return new Date().toISOString().slice(0, 10);
 }
 
-function formatDate(dateStr: string) {
-  return new Date(`${dateStr}T00:00:00`).toLocaleDateString('fr-FR', {
+function formatDate(dateStr: string, lang: Lang) {
+  return new Date(`${dateStr}T00:00:00`).toLocaleDateString(lang === 'fr' ? 'fr-FR' : 'en-US', {
     day: 'numeric',
     month: 'long',
     year: 'numeric',
@@ -35,6 +37,7 @@ function sortedImages(event: Event): EventImage[] {
 
 export default function EventsSection() {
   const { session } = useAuth();
+  const { lang, t } = useLanguage();
   const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -51,7 +54,7 @@ export default function EventsSection() {
       .select('*, event_images(*)')
       .order('event_date', { ascending: false });
     if (error) {
-      setError('Impossible de charger les évènements.');
+      setError(t.events.loadError);
     } else {
       setEvents(data ?? []);
     }
@@ -60,10 +63,11 @@ export default function EventsSection() {
 
   useEffect(() => {
     fetchEvents();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleDelete = async (event: Event) => {
-    if (!confirm('Supprimer cet évènement ?')) return;
+    if (!confirm(t.events.confirmDeleteEvent)) return;
     setDeletingId(event.id);
     const paths = sortedImages(event).map((img) => img.image_path);
     if (paths.length > 0) {
@@ -72,7 +76,7 @@ export default function EventsSection() {
     const { error } = await supabase.from('events').delete().eq('id', event.id);
     setDeletingId(null);
     if (error) {
-      alert('Erreur lors de la suppression.');
+      alert(t.events.deleteEventError);
     } else {
       setEvents((prev) => prev.filter((e) => e.id !== event.id));
     }
@@ -120,7 +124,7 @@ export default function EventsSection() {
         <div className="p-5">
           <div className="flex items-center gap-2 text-xs text-gray-400 mb-2">
             <Calendar size={13} />
-            {formatDate(event.event_date)}
+            {formatDate(event.event_date, lang)}
           </div>
           <h3 className="font-bold text-lg text-brand-500 mb-2 line-clamp-2">{event.title}</h3>
           <p className="text-sm text-gray-500 leading-relaxed line-clamp-3">{event.description}</p>
@@ -132,7 +136,7 @@ export default function EventsSection() {
                 className="inline-flex items-center gap-1.5 text-xs font-medium text-brand-500 hover:text-brand-600"
               >
                 <Pencil size={13} />
-                Modifier
+                {t.events.edit}
               </button>
               <button
                 onClick={() => handleDelete(event)}
@@ -144,7 +148,7 @@ export default function EventsSection() {
                 ) : (
                   <Trash2 size={13} />
                 )}
-                Supprimer
+                {t.events.delete}
               </button>
             </div>
           )}
@@ -159,15 +163,13 @@ export default function EventsSection() {
         <Reveal className="text-center mb-12">
           <span className="inline-flex items-center gap-1.5 text-leaf-500 font-semibold text-sm uppercase tracking-widest">
             <Camera size={14} />
-            Notre action en images
+            {t.events.eyebrow}
           </span>
           <h2 className="font-display mt-3 text-3xl sm:text-4xl font-bold text-brand-500">
-            Galerie des évènements
+            {t.events.title}
           </h2>
           <div className="mt-4 mx-auto w-16 h-1 bg-leaf-500 rounded-full"></div>
-          <p className="mt-6 text-gray-500 max-w-2xl mx-auto text-lg">
-            Découvrez les moments forts de nos actions sur le terrain, partagés par notre équipe.
-          </p>
+          <p className="mt-6 text-gray-500 max-w-2xl mx-auto text-lg">{t.events.subtitle}</p>
         </Reveal>
 
         {session && (
@@ -177,7 +179,7 @@ export default function EventsSection() {
               className="inline-flex items-center gap-2 bg-brand-500 text-white font-semibold px-6 py-3 rounded-full hover:bg-brand-600 hover:shadow-lg hover:shadow-brand-500/25 hover:-translate-y-0.5 transition-all duration-200 shadow-lg"
             >
               <Plus size={18} />
-              Publier un évènement
+              {t.events.publish}
             </button>
           </div>
         )}
@@ -191,14 +193,14 @@ export default function EventsSection() {
         ) : events.length === 0 ? (
           <div className="flex flex-col items-center gap-3 py-16 text-gray-400">
             <ImageOff size={40} />
-            <p className="text-sm">Aucun évènement publié pour le moment.</p>
+            <p className="text-sm">{t.events.empty}</p>
           </div>
         ) : (
           <div className="space-y-16">
             {upcoming.length > 0 && (
               <div>
                 <h3 className="text-xl font-bold text-brand-500 mb-6 flex items-center gap-2">
-                  Évènements à venir
+                  {t.events.upcoming}
                   <span className="text-xs font-semibold bg-leaf-500/10 text-leaf-500 px-2.5 py-1 rounded-full">
                     {upcoming.length}
                   </span>
@@ -212,7 +214,7 @@ export default function EventsSection() {
             {past.length > 0 && (
               <div>
                 <h3 className="text-xl font-bold text-brand-500 mb-6 flex items-center gap-2">
-                  Évènements passés
+                  {t.events.past}
                   <span className="text-xs font-semibold bg-gray-100 text-gray-500 px-2.5 py-1 rounded-full">
                     {past.length}
                   </span>
@@ -226,7 +228,7 @@ export default function EventsSection() {
         {!session && (
           <p className="mt-10 text-center text-xs text-gray-400 flex items-center justify-center gap-1.5">
             <Lock size={12} />
-            Espace administrateur réservé à l'équipe HUMAN-DEV.
+            {t.events.adminNote}
           </p>
         )}
       </div>
@@ -268,6 +270,7 @@ function EventForm({
   onClose: () => void;
   onSaved: () => void;
 }) {
+  const { t } = useLanguage();
   const isEditing = !!event;
   const [title, setTitle] = useState(event?.title ?? '');
   const [description, setDescription] = useState(event?.description ?? '');
@@ -295,13 +298,13 @@ function EventForm({
   };
 
   const removeExistingImage = async (image: EventImage) => {
-    if (!confirm('Supprimer cette image ?')) return;
+    if (!confirm(t.events.confirmDeleteImage)) return;
     setRemovingId(image.id);
     await supabase.storage.from('event-images').remove([image.image_path]);
     const { error: delErr } = await supabase.from('event_images').delete().eq('id', image.id);
     setRemovingId(null);
     if (delErr) {
-      alert("Erreur lors de la suppression de l'image.");
+      alert(t.events.deleteImageError);
       return;
     }
     setExistingImages((prev) => prev.filter((i) => i.id !== image.id));
@@ -311,7 +314,7 @@ function EventForm({
     e.preventDefault();
     setError(null);
     if (!title.trim() || !description.trim() || !eventDate) {
-      setError('Le titre, la description et la date sont obligatoires.');
+      setError(t.events.form.requiredError);
       return;
     }
     setSubmitting(true);
@@ -324,7 +327,7 @@ function EventForm({
         .update({ title: title.trim(), description: description.trim(), event_date: eventDate })
         .eq('id', event.id);
       if (updErr) {
-        setError("Échec de la mise à jour de l'évènement.");
+        setError(t.events.form.updateError);
         setSubmitting(false);
         return;
       }
@@ -335,7 +338,7 @@ function EventForm({
         .select('id')
         .single();
       if (insErr || !inserted) {
-        setError("Échec de la publication de l'évènement.");
+        setError(t.events.form.createError);
         setSubmitting(false);
         return;
       }
@@ -352,7 +355,7 @@ function EventForm({
           .from('event-images')
           .upload(path, file, { contentType: file.type });
         if (upErr) {
-          setError("Échec de l'envoi d'une image.");
+          setError(t.events.form.uploadError);
           setSubmitting(false);
           return;
         }
@@ -364,7 +367,7 @@ function EventForm({
           position: startPosition + i,
         });
         if (imgErr) {
-          setError("Échec de l'enregistrement d'une image.");
+          setError(t.events.form.saveImageError);
           setSubmitting(false);
           return;
         }
@@ -380,7 +383,7 @@ function EventForm({
       <div className="bg-white rounded-3xl w-full max-w-lg shadow-2xl overflow-hidden max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between px-6 py-4 border-b">
           <h3 className="font-bold text-lg text-brand-500">
-            {isEditing ? "Modifier l'évènement" : 'Publier un évènement'}
+            {isEditing ? t.events.form.editTitle : t.events.form.createTitle}
           </h3>
           <button onClick={onClose} className="text-gray-400 hover:text-gray-700">
             <X size={20} />
@@ -389,20 +392,22 @@ function EventForm({
 
         <form onSubmit={handleSubmit} className="p-6 space-y-5">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1.5">Titre *</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1.5">
+              {t.events.form.titleLabel}
+            </label>
             <input
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               maxLength={120}
               className="w-full rounded-xl border border-gray-200 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/40"
-              placeholder="Ex : Distribution de kits à Maroua"
+              placeholder={t.events.form.titlePlaceholder}
             />
           </div>
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1.5">
-              Date de l'évènement *
+              {t.events.form.dateLabel}
             </label>
             <input
               type="date"
@@ -410,25 +415,27 @@ function EventForm({
               onChange={(e) => setEventDate(e.target.value)}
               className="w-full rounded-xl border border-gray-200 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/40"
             />
-            <p className="mt-1 text-xs text-gray-400">
-              Une date future place l'évènement dans « à venir », une date passée dans « passés ».
-            </p>
+            <p className="mt-1 text-xs text-gray-400">{t.events.form.dateHint}</p>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1.5">Description *</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1.5">
+              {t.events.form.descriptionLabel}
+            </label>
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               rows={4}
               maxLength={4000}
               className="w-full rounded-xl border border-gray-200 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/40 resize-none"
-              placeholder="Décrivez l'évènement, le contexte, les bénéficiaires..."
+              placeholder={t.events.form.descriptionPlaceholder}
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1.5">Images</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1.5">
+              {t.events.form.imagesLabel}
+            </label>
             <input
               type="file"
               accept="image/*"
@@ -483,7 +490,7 @@ function EventForm({
               onClick={onClose}
               className="px-5 py-2.5 rounded-full text-sm font-medium text-gray-600 hover:bg-gray-100"
             >
-              Annuler
+              {t.events.form.cancel}
             </button>
             <button
               type="submit"
@@ -491,7 +498,7 @@ function EventForm({
               className="inline-flex items-center gap-2 bg-brand-500 text-white font-semibold px-6 py-2.5 rounded-full hover:bg-brand-600 disabled:opacity-60"
             >
               {submitting && <Loader2 size={16} className="animate-spin" />}
-              {isEditing ? 'Enregistrer' : 'Publier'}
+              {isEditing ? t.events.form.save : t.events.form.publish}
             </button>
           </div>
         </form>
@@ -501,6 +508,7 @@ function EventForm({
 }
 
 function Lightbox({ event, onClose }: { event: Event; onClose: () => void }) {
+  const { lang } = useLanguage();
   const images = sortedImages(event);
   const [index, setIndex] = useState(0);
   const current = images[index];
@@ -565,7 +573,7 @@ function Lightbox({ event, onClose }: { event: Event; onClose: () => void }) {
         <div className="p-6">
           <div className="flex items-center gap-2 text-xs text-gray-400 mb-3">
             <Calendar size={13} />
-            {formatDate(event.event_date)}
+            {formatDate(event.event_date, lang)}
           </div>
           <h3 className="font-bold text-2xl text-brand-500 mb-3">{event.title}</h3>
           <p className="text-gray-600 leading-relaxed whitespace-pre-line">{event.description}</p>

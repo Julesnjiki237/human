@@ -18,7 +18,6 @@ import {
   HeartHandshake,
   Handshake,
   Home,
-  BookOpen,
   Zap,
   Linkedin,
   Facebook,
@@ -26,8 +25,13 @@ import {
   ArrowRight,
   ArrowUp,
   FileCheck2,
+  GraduationCap,
+  TrendingUp,
+  CheckCircle2,
+  Languages,
 } from 'lucide-react';
 import { AuthProvider } from './context/AuthContext';
+import { useLanguage } from './context/LanguageContext';
 import EventsSection from './components/EventsSection';
 import DonationsSection from './components/DonationsSection';
 import AdminLogin from './components/AdminLogin';
@@ -47,70 +51,68 @@ const socials = [
   },
 ];
 
-const values = [
-  { icon: Heart, label: 'Dignité humaine' },
-  { icon: HandHeart, label: 'Solidarité active' },
-  { icon: Users, label: 'Participation communautaire' },
-  { icon: Shield, label: 'Inclusion et équité' },
-  { icon: Star, label: 'Transparence et redevabilité' },
-  { icon: Zap, label: 'Innovation sociale' },
-  { icon: Globe, label: 'Responsabilité locale' },
-  { icon: Leaf, label: 'Cohésion sociale' },
+const navIds = ['about', 'vision', 'actions', 'zones', 'values', 'events', 'dons', 'contact'];
+
+const valuesIcons = [Heart, HandHeart, Users, Shield, Star, Zap, Globe, Leaf];
+
+const axisTheme = {
+  leaf: {
+    badge: 'bg-leaf-500',
+    iconBg: 'bg-leaf-500/10',
+    iconText: 'text-leaf-600',
+    accent: 'text-leaf-600',
+    border: 'border-leaf-500/40',
+    check: 'text-leaf-500',
+  },
+  blue: {
+    badge: 'bg-blue-500',
+    iconBg: 'bg-blue-500/10',
+    iconText: 'text-blue-600',
+    accent: 'text-blue-600',
+    border: 'border-blue-500/40',
+    check: 'text-blue-500',
+  },
+  purple: {
+    badge: 'bg-purple-500',
+    iconBg: 'bg-purple-500/10',
+    iconText: 'text-purple-600',
+    accent: 'text-purple-600',
+    border: 'border-purple-500/40',
+    check: 'text-purple-500',
+  },
+  orange: {
+    badge: 'bg-orange-500',
+    iconBg: 'bg-orange-500/10',
+    iconText: 'text-orange-600',
+    accent: 'text-orange-600',
+    border: 'border-orange-500/40',
+    check: 'text-orange-500',
+  },
+} as const;
+
+const axesMeta: { icon: typeof GraduationCap; color: keyof typeof axisTheme }[] = [
+  { icon: GraduationCap, color: 'leaf' },
+  { icon: Users, color: 'blue' },
+  { icon: HandHeart, color: 'purple' },
+  { icon: TrendingUp, color: 'orange' },
 ];
 
-const actions = [
-  {
-    icon: BookOpen,
-    title: 'Formation',
-    description:
-      'Renforcement des compétences des communautés et des acteurs locaux pour une autonomie durable.',
-  },
-  {
-    icon: Zap,
-    title: 'Autonomisation économique',
-    description:
-      "Appui aux initiatives génératrices de revenus, notamment pour les jeunes et les femmes.",
-  },
-  {
-    icon: Users,
-    title: 'Renforcement des capacités',
-    description:
-      "Accompagnement des structures communautaires pour améliorer leur efficacité et leur impact.",
-  },
-  {
-    icon: Heart,
-    title: 'Résilience communautaire',
-    description:
-      'Mise en place de mécanismes locaux pour faire face aux crises humanitaires et climatiques.',
-  },
+const zoneNumbers = [1, 2, 3, 4, 5];
+
+const engagementIcons = [HandHeart, Handshake, Leaf];
+
+const heroStatsMeta = [
+  { icon: Target, value: '4' },
+  { icon: HandHeart, value: '8' },
+  { icon: Users, value: '6' },
 ];
 
-const heroStats = [
-  { icon: Target, value: '4', label: "axes d'intervention" },
-  { icon: HandHeart, value: '8', label: 'valeurs fondamentales' },
-  { icon: Users, value: '6', label: 'groupes bénéficiaires' },
-];
+const beneficiariesIcons = [Users, HeartHandshake, Home, Globe2, Handshake, ShieldCheck];
 
-const beneficiaries = [
-  { label: 'Jeunes', icon: Users },
-  { label: 'Femmes', icon: HeartHandshake },
-  { label: 'Personnes déplacées internes', icon: Home },
-  { label: 'Réfugiés', icon: Globe2 },
-  { label: 'Populations hôtes', icon: Handshake },
-  { label: 'Groupes marginalisés', icon: ShieldCheck },
-];
-
-const navLinks: [string, string][] = [
-  ['À propos', 'about'],
-  ['Vision & Mission', 'vision'],
-  ['Nos actions', 'actions'],
-  ['Valeurs', 'values'],
-  ['Évènements', 'events'],
-  ['Dons', 'dons'],
-  ['Contact', 'contact'],
-];
+const aboutCardsIcons = [MapPin, Globe, Users, Heart];
 
 export default function App() {
+  const { lang, toggleLang, t } = useLanguage();
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
@@ -125,6 +127,22 @@ export default function App() {
     document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
     setMenuOpen(false);
   };
+
+  const navLinks = navIds.map((id, index) => [t.nav.links[index], id] as [string, string]);
+
+  const LangToggle = ({ compact = false }: { compact?: boolean }) => (
+    <button
+      onClick={toggleLang}
+      aria-label="Changer de langue / Switch language"
+      title={lang === 'fr' ? 'Switch to English' : 'Passer en français'}
+      className={`inline-flex items-center gap-1.5 rounded-full border border-brand-500/20 text-brand-500 font-semibold hover:bg-brand-500/8 transition-colors duration-200 ${
+        compact ? 'px-3 py-1.5 text-xs' : 'px-3.5 py-1.5 text-xs'
+      }`}
+    >
+      <Languages size={14} />
+      {lang === 'fr' ? 'FR' : 'EN'}
+    </button>
+  );
 
   return (
     <AuthProvider>
@@ -143,12 +161,12 @@ export default function App() {
               </span>
             </button>
 
-            <div className="hidden md:flex items-center gap-6 text-sm font-medium text-gray-600">
+            <div className="hidden lg:flex items-center gap-5 text-sm font-medium text-gray-600">
               {navLinks.map(([label, id]) => (
                 <button
                   key={id}
                   onClick={() => scrollTo(id)}
-                  className="relative group py-1 hover:text-brand-500 transition-colors duration-200"
+                  className="relative group py-1 whitespace-nowrap hover:text-brand-500 transition-colors duration-200"
                 >
                   {label}
                   <span className="absolute -bottom-0.5 left-0 w-0 h-0.5 bg-leaf-500 rounded-full group-hover:w-full transition-all duration-300" />
@@ -156,24 +174,30 @@ export default function App() {
               ))}
             </div>
 
-            <button
-              onClick={() => scrollTo('contact')}
-              className="hidden md:inline-flex items-center gap-1.5 bg-brand-500 text-white text-sm font-semibold px-5 py-2.5 rounded-full hover:bg-brand-600 hover:shadow-lg hover:shadow-brand-500/25 transition-all duration-200"
-            >
-              Nous rejoindre
-              <ArrowRight size={15} />
-            </button>
+            <div className="hidden lg:flex items-center gap-3">
+              <LangToggle />
+              <button
+                onClick={() => scrollTo('contact')}
+                className="inline-flex items-center gap-1.5 bg-brand-500 text-white text-sm font-semibold px-5 py-2.5 rounded-full whitespace-nowrap hover:bg-brand-600 hover:shadow-lg hover:shadow-brand-500/25 transition-all duration-200"
+              >
+                {t.nav.cta}
+                <ArrowRight size={15} />
+              </button>
+            </div>
 
-            <button
-              onClick={() => setMenuOpen(!menuOpen)}
-              className="md:hidden p-2 rounded-lg text-gray-600 hover:text-brand-500"
-            >
-              {menuOpen ? <X size={22} /> : <Menu size={22} />}
-            </button>
+            <div className="lg:hidden flex items-center gap-2">
+              <LangToggle compact />
+              <button
+                onClick={() => setMenuOpen(!menuOpen)}
+                className="p-2 rounded-lg text-gray-600 hover:text-brand-500"
+              >
+                {menuOpen ? <X size={22} /> : <Menu size={22} />}
+              </button>
+            </div>
           </div>
 
           {menuOpen && (
-            <div className="md:hidden bg-white border-t px-4 py-4 flex flex-col gap-3 text-sm font-medium text-gray-700 shadow-lg">
+            <div className="lg:hidden bg-white border-t px-4 py-4 flex flex-col gap-3 text-sm font-medium text-gray-700 shadow-lg">
               {navLinks.map(([label, id]) => (
                 <button
                   key={id}
@@ -187,7 +211,7 @@ export default function App() {
                 onClick={() => scrollTo('contact')}
                 className="mt-2 inline-flex items-center justify-center gap-1.5 bg-brand-500 text-white text-sm font-semibold px-4 py-2.5 rounded-full"
               >
-                Nous rejoindre
+                {t.nav.cta}
                 <ArrowRight size={15} />
               </button>
             </div>
@@ -223,18 +247,17 @@ export default function App() {
 
             <div className="inline-flex items-center gap-1.5 bg-leaf-500/15 text-leaf-600 text-xs font-semibold uppercase tracking-widest px-4 py-1.5 rounded-full mb-5">
               <Sparkles size={13} />
-              Au service de l'humanité
+              {t.hero.badge}
             </div>
 
             <h1 className="font-display text-4xl sm:text-5xl lg:text-6xl font-extrabold text-brand-500 leading-tight mb-6">
-              Association
+              {t.hero.title1}
               <br />
-              <span className="text-leaf-500">HUMAN-DEV</span>
+              <span className="text-leaf-500">{t.hero.title2}</span>
             </h1>
 
             <p className="text-lg sm:text-xl text-gray-600 leading-relaxed max-w-2xl mx-auto mb-10">
-              Une association humanitaire et de développement au service des communautés vulnérables
-              de l'Extrême-Nord du Cameroun.
+              {t.hero.subtitle}
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center mb-14">
@@ -242,21 +265,21 @@ export default function App() {
                 onClick={() => scrollTo('about')}
                 className="inline-flex items-center justify-center gap-2 bg-brand-500 text-white font-semibold px-8 py-3.5 rounded-full hover:bg-brand-600 transition-all duration-200 shadow-lg hover:shadow-xl hover:-translate-y-0.5"
               >
-                Découvrir notre mission
+                {t.hero.ctaPrimary}
                 <ArrowRight size={18} />
               </button>
               <button
                 onClick={() => scrollTo('contact')}
                 className="border-2 border-brand-500 text-brand-500 font-semibold px-8 py-3.5 rounded-full hover:bg-brand-500/8 transition-all duration-200"
               >
-                Nous contacter
+                {t.hero.ctaSecondary}
               </button>
             </div>
 
             <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4">
-              {heroStats.map(({ icon: Icon, value, label }) => (
+              {heroStatsMeta.map(({ icon: Icon, value }, index) => (
                 <div
-                  key={label}
+                  key={value}
                   className="flex items-center gap-3 bg-white/70 backdrop-blur border border-white shadow-sm rounded-2xl px-5 py-3"
                 >
                   <div className="w-9 h-9 rounded-xl bg-brand-500/10 flex items-center justify-center flex-shrink-0">
@@ -266,7 +289,7 @@ export default function App() {
                     <p className="font-display font-bold text-brand-500 text-lg leading-none">
                       {value}
                     </p>
-                    <p className="text-xs text-gray-500 mt-1">{label}</p>
+                    <p className="text-xs text-gray-500 mt-1">{t.hero.stats[index]}</p>
                   </div>
                 </div>
               ))}
@@ -286,10 +309,10 @@ export default function App() {
           <div className="max-w-6xl mx-auto">
             <Reveal className="text-center mb-16">
               <span className="text-leaf-500 font-semibold text-sm uppercase tracking-widest">
-                Qui sommes-nous
+                {t.about.eyebrow}
               </span>
               <h2 className="font-display mt-3 text-3xl sm:text-4xl font-bold text-brand-500">
-                Présentation de l'organisation
+                {t.about.title}
               </h2>
               <div className="mt-4 mx-auto w-16 h-1 bg-leaf-500 rounded-full"></div>
             </Reveal>
@@ -297,56 +320,43 @@ export default function App() {
             <div className="grid lg:grid-cols-2 gap-12 items-center">
               <Reveal className="space-y-6 text-gray-600 leading-relaxed text-lg">
                 <p>
-                  <strong className="text-brand-500">HUMAN-DEV</strong> est une association
-                  humanitaire et de développement intervenant principalement dans la région de
-                  l'Extrême-Nord du Cameroun. Elle agit en faveur des communautés vulnérables,
-                  notamment les jeunes, les femmes, les personnes déplacées internes, les réfugiés,
-                  les populations hôtes et les groupes marginalisés vivant dans des contextes de
-                  crise ou de fragilité.
+                  <strong className="text-brand-500">HUMAN-DEV</strong> {t.about.p1}
                 </p>
-                <p>
-                  L'association inscrit son intervention à l'intersection de l'urgence humanitaire,
-                  du développement communautaire, de l'autonomisation économique et du renforcement
-                  de la résilience locale. Elle ambitionne de promouvoir des solutions pratiques,
-                  durables et adaptées aux besoins des populations, tout en renforçant les capacités
-                  des acteurs communautaires et des structures locales.
-                </p>
+                <p>{t.about.p2}</p>
 
                 <div className="flex items-start gap-3 bg-brand-50 border-l-4 border-brand-500 rounded-r-xl p-5">
                   <FileCheck2 size={20} className="text-brand-500 flex-shrink-0 mt-0.5" />
                   <div>
-                    <p className="text-sm font-semibold text-brand-500 mb-1">Récépissé officiel</p>
-                    <p className="text-sm text-gray-500">
-                      N°028/2026/RDA/K22/SAAJP du 11 Mars 2026
+                    <p className="text-sm font-semibold text-brand-500 mb-1">
+                      {t.about.receiptLabel}
                     </p>
+                    <p className="text-sm text-gray-500">{t.about.receiptValue}</p>
                   </div>
                 </div>
               </Reveal>
 
               <Reveal delay={150} className="grid grid-cols-2 gap-4">
-                {[
-                  { label: 'Siège social', value: 'Maroua', icon: MapPin },
-                  { label: 'Région', value: 'Extrême-Nord, Cameroun', icon: Globe },
-                  { label: 'Bénéficiaires', value: 'Communautés vulnérables', icon: Users },
-                  { label: 'Approche', value: 'Humanitaire & Développement', icon: Heart },
-                ].map(({ label, value, icon: Icon }) => (
-                  <div
-                    key={label}
-                    className="group bg-gradient-to-br from-brand-50 to-leaf-50 hover:from-brand-500 hover:to-brand-600 rounded-2xl p-5 flex flex-col gap-3 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
-                  >
-                    <div className="w-10 h-10 rounded-xl bg-brand-500/10 group-hover:bg-white/20 flex items-center justify-center transition-colors duration-300">
-                      <Icon size={18} className="text-brand-500 group-hover:text-white transition-colors duration-300" />
+                {t.about.cards.map(({ label, value }, index) => {
+                  const Icon = aboutCardsIcons[index];
+                  return (
+                    <div
+                      key={label}
+                      className="group bg-gradient-to-br from-brand-50 to-leaf-50 hover:from-brand-500 hover:to-brand-600 rounded-2xl p-5 flex flex-col gap-3 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
+                    >
+                      <div className="w-10 h-10 rounded-xl bg-brand-500/10 group-hover:bg-white/20 flex items-center justify-center transition-colors duration-300">
+                        <Icon size={18} className="text-brand-500 group-hover:text-white transition-colors duration-300" />
+                      </div>
+                      <div>
+                        <p className="text-xs text-gray-400 group-hover:text-white/70 font-medium uppercase tracking-wide transition-colors duration-300">
+                          {label}
+                        </p>
+                        <p className="text-sm font-semibold text-gray-700 group-hover:text-white mt-0.5 transition-colors duration-300">
+                          {value}
+                        </p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="text-xs text-gray-400 group-hover:text-white/70 font-medium uppercase tracking-wide transition-colors duration-300">
-                        {label}
-                      </p>
-                      <p className="text-sm font-semibold text-gray-700 group-hover:text-white mt-0.5 transition-colors duration-300">
-                        {value}
-                      </p>
-                    </div>
-                  </div>
-                ))}
+                  );
+                })}
               </Reveal>
             </div>
           </div>
@@ -364,10 +374,10 @@ export default function App() {
           <div className="relative max-w-6xl mx-auto">
             <Reveal className="text-center mb-16">
               <span className="text-leaf-100 font-semibold text-sm uppercase tracking-widest">
-                Nos engagements
+                {t.vision.eyebrow}
               </span>
               <h2 className="font-display mt-3 text-3xl sm:text-4xl font-bold text-white">
-                Vision & Mission
+                {t.vision.title}
               </h2>
               <div className="mt-4 mx-auto w-16 h-1 bg-leaf-500 rounded-full"></div>
             </Reveal>
@@ -378,13 +388,11 @@ export default function App() {
                   <div className="w-12 h-12 rounded-2xl bg-leaf-500/30 flex items-center justify-center">
                     <Eye size={22} className="text-white" />
                   </div>
-                  <h3 className="font-display text-2xl font-bold text-white">Notre Vision</h3>
+                  <h3 className="font-display text-2xl font-bold text-white">
+                    {t.vision.visionTitle}
+                  </h3>
                 </div>
-                <p className="text-white/85 leading-relaxed text-lg">
-                  Construire un monde dans lequel chaque communauté vulnérable dispose des capacités,
-                  des ressources et des opportunités nécessaires pour devenir actrice de son propre
-                  développement.
-                </p>
+                <p className="text-white/85 leading-relaxed text-lg">{t.vision.visionText}</p>
               </Reveal>
 
               <Reveal delay={150} className="bg-white/10 backdrop-blur rounded-3xl p-8 border border-white/20 hover:bg-white/15 transition-colors duration-300">
@@ -392,14 +400,11 @@ export default function App() {
                   <div className="w-12 h-12 rounded-2xl bg-leaf-500/30 flex items-center justify-center">
                     <Target size={22} className="text-white" />
                   </div>
-                  <h3 className="font-display text-2xl font-bold text-white">Notre Mission</h3>
+                  <h3 className="font-display text-2xl font-bold text-white">
+                    {t.vision.missionTitle}
+                  </h3>
                 </div>
-                <p className="text-white/85 leading-relaxed text-lg">
-                  Proposer des solutions durables, inclusives et contextualisées face aux urgences
-                  humanitaires et aux défis du développement, à travers la formation,
-                  l'autonomisation économique, le renforcement des capacités locales et la résilience
-                  communautaire.
-                </p>
+                <p className="text-white/85 leading-relaxed text-lg">{t.vision.missionText}</p>
               </Reveal>
             </div>
           </div>
@@ -410,40 +415,155 @@ export default function App() {
           <div className="max-w-6xl mx-auto">
             <Reveal className="text-center mb-16">
               <span className="text-leaf-500 font-semibold text-sm uppercase tracking-widest">
-                Ce que nous faisons
+                {t.actions.eyebrow}
               </span>
               <h2 className="font-display mt-3 text-3xl sm:text-4xl font-bold text-brand-500">
-                Nos domaines d'action
+                {t.actions.title}
               </h2>
               <div className="mt-4 mx-auto w-16 h-1 bg-leaf-500 rounded-full"></div>
-              <p className="mt-6 text-gray-500 max-w-2xl mx-auto text-lg">
-                HUMAN-DEV intervient à l'intersection de l'urgence humanitaire et du développement
-                durable à travers quatre axes complémentaires.
-              </p>
+              <p className="mt-6 text-gray-500 max-w-2xl mx-auto text-lg">{t.actions.subtitle}</p>
             </Reveal>
 
-            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {actions.map(({ icon: Icon, title, description }, index) => (
-                <Reveal key={title} delay={index * 100}>
-                  <div className="group relative bg-sand-50 hover:bg-brand-500 rounded-3xl p-7 h-full transition-all duration-300 cursor-default hover:-translate-y-1 hover:shadow-xl overflow-hidden">
-                    <span className="absolute top-5 right-6 font-display text-4xl font-extrabold text-brand-500/10 group-hover:text-white/15 transition-colors duration-300">
-                      {String(index + 1).padStart(2, '0')}
-                    </span>
-                    <div className="relative w-12 h-12 rounded-2xl bg-brand-500/10 group-hover:bg-white/20 flex items-center justify-center mb-5 transition-colors duration-300">
-                      <Icon
-                        size={22}
-                        className="text-brand-500 group-hover:text-white transition-colors duration-300"
-                      />
+            <div className="space-y-6">
+              {t.actions.axes.map(({ title, description, priorities }, index) => {
+                const { icon: Icon, color } = axesMeta[index];
+                const theme = axisTheme[color];
+                return (
+                  <Reveal key={title} delay={index * 100}>
+                    <div
+                      className={`bg-sand-50 rounded-3xl p-6 sm:p-8 border-l-4 ${theme.border} hover:shadow-xl transition-shadow duration-300`}
+                    >
+                      <div className="flex flex-col sm:flex-row sm:items-start gap-6">
+                        <div className="flex sm:flex-col items-center gap-4 sm:w-32 flex-shrink-0">
+                          <div
+                            className={`w-12 h-12 rounded-2xl ${theme.badge} text-white flex items-center justify-center font-display font-bold text-base flex-shrink-0`}
+                          >
+                            {String(index + 1).padStart(2, '0')}
+                          </div>
+                          <div
+                            className={`w-12 h-12 rounded-2xl ${theme.iconBg} flex items-center justify-center flex-shrink-0`}
+                          >
+                            <Icon size={22} className={theme.iconText} />
+                          </div>
+                        </div>
+                        <div className="flex-1">
+                          <span
+                            className={`text-xs font-bold uppercase tracking-widest ${theme.accent}`}
+                          >
+                            {t.actions.axisLabel} {index + 1}
+                          </span>
+                          <h3 className="font-display text-xl sm:text-2xl font-bold text-brand-500 mt-1 mb-2">
+                            {title}
+                          </h3>
+                          <p className="text-gray-500 mb-5">{description}</p>
+                          <p className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-3">
+                            {t.actions.prioritiesLabel}
+                          </p>
+                          <ul className="grid sm:grid-cols-2 gap-2.5">
+                            {priorities.map((p) => (
+                              <li key={p} className="flex items-start gap-2 text-sm text-gray-600">
+                                <CheckCircle2
+                                  size={15}
+                                  className={`${theme.check} flex-shrink-0 mt-0.5`}
+                                />
+                                <span>{p}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      </div>
                     </div>
-                    <h3 className="relative font-bold text-lg text-brand-500 group-hover:text-white mb-3 transition-colors duration-300">
-                      {title}
-                    </h3>
-                    <p className="relative text-gray-500 group-hover:text-white/80 text-sm leading-relaxed transition-colors duration-300">
-                      {description}
-                    </p>
+                  </Reveal>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+
+        {/* Zones d'intervention */}
+        <section
+          id="zones"
+          className="py-24 px-4"
+          style={{ background: 'linear-gradient(160deg, #f7faf9 0%, #eef6f2 100%)' }}
+        >
+          <div className="max-w-6xl mx-auto">
+            <Reveal className="text-center mb-10">
+              <span className="text-leaf-500 font-semibold text-sm uppercase tracking-widest">
+                {t.zones.eyebrow}
+              </span>
+              <h2 className="font-display mt-3 text-3xl sm:text-4xl font-bold text-brand-500">
+                {t.zones.title}
+              </h2>
+              <div className="mt-4 mx-auto w-16 h-1 bg-leaf-500 rounded-full"></div>
+              <p className="mt-6 text-gray-500 max-w-2xl mx-auto text-lg">{t.zones.subtitle}</p>
+            </Reveal>
+
+            <Reveal delay={100} className="flex flex-wrap items-center justify-center gap-3 mb-14">
+              {t.zones.engagement.map(({ label, sub }, index) => {
+                const Icon = engagementIcons[index];
+                return (
+                  <div
+                    key={label}
+                    className="flex items-center gap-3 bg-white shadow-sm border border-brand-500/10 rounded-2xl px-5 py-3"
+                  >
+                    <div className="w-9 h-9 rounded-xl bg-brand-500/10 flex items-center justify-center flex-shrink-0">
+                      <Icon size={16} className="text-brand-500" />
+                    </div>
+                    <div className="text-left">
+                      <p className="text-sm font-semibold text-gray-700">{label}</p>
+                      {sub && <p className="text-xs text-gray-400">{sub}</p>}
+                    </div>
                   </div>
-                </Reveal>
-              ))}
+                );
+              })}
+            </Reveal>
+
+            <div className="grid lg:grid-cols-[1.1fr_0.9fr] gap-8">
+              <Reveal className="bg-white rounded-3xl p-6 sm:p-8 shadow-sm">
+                <div className="flex items-center gap-2 mb-2">
+                  <MapPin size={16} className="text-brand-500" />
+                  <p className="font-bold text-brand-500 uppercase tracking-wide text-xs">
+                    {t.zones.priorityBadge}
+                  </p>
+                </div>
+                <h3 className="font-display text-2xl font-bold text-brand-500 mb-1">
+                  {t.zones.priorityTitle}
+                </h3>
+                <p className="text-gray-500 mb-6">
+                  {t.zones.baseLabel} <strong className="text-gray-700">{t.zones.baseValue}</strong>
+                </p>
+                <div className="space-y-4">
+                  {t.zones.list.map(({ name, description }, index) => (
+                    <div key={name} className="flex gap-4 items-start">
+                      <div className="w-9 h-9 rounded-full bg-brand-500 text-white flex items-center justify-center font-bold text-sm flex-shrink-0">
+                        {zoneNumbers[index]}
+                      </div>
+                      <div>
+                        <p className="font-bold text-gray-700">{name}</p>
+                        <p className="text-sm text-gray-500">{description}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </Reveal>
+
+              <Reveal delay={150} className="bg-brand-500 rounded-3xl p-6 sm:p-8 text-white flex flex-col">
+                <p className="font-bold uppercase tracking-wide text-xs text-leaf-100 mb-2">
+                  {t.zones.expansionBadge}
+                </p>
+                <p className="text-white/80 text-sm mb-6">{t.zones.expansionIntro}</p>
+                <div className="space-y-4 flex-1">
+                  {t.zones.expansionList.map(({ name, description }) => (
+                    <div key={name} className="bg-white/10 rounded-2xl p-4">
+                      <p className="font-semibold text-sm mb-1">{name}</p>
+                      <p className="text-white/70 text-xs leading-relaxed">{description}</p>
+                    </div>
+                  ))}
+                </div>
+                <p className="mt-6 text-sm text-white/90 italic border-t border-white/20 pt-4">
+                  {t.zones.commitment}
+                </p>
+              </Reveal>
             </div>
           </div>
         </section>
@@ -457,38 +577,38 @@ export default function App() {
           <div className="max-w-6xl mx-auto">
             <Reveal className="text-center mb-16">
               <span className="text-leaf-500 font-semibold text-sm uppercase tracking-widest">
-                Ce qui nous guide
+                {t.values.eyebrow}
               </span>
               <h2 className="font-display mt-3 text-3xl sm:text-4xl font-bold text-brand-500">
-                Valeurs fondamentales
+                {t.values.title}
               </h2>
               <div className="mt-4 mx-auto w-16 h-1 bg-leaf-500 rounded-full"></div>
-              <p className="mt-6 text-gray-500 max-w-xl mx-auto text-lg">
-                L'action de HUMAN-DEV repose sur des valeurs fortes qui guident chacune de nos
-                interventions.
-              </p>
+              <p className="mt-6 text-gray-500 max-w-xl mx-auto text-lg">{t.values.subtitle}</p>
             </Reveal>
 
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-              {values.map(({ icon: Icon, label }, index) => (
-                <Reveal key={label} delay={index * 60}>
-                  <div className="group bg-white rounded-2xl p-6 flex flex-col items-center text-center gap-3 shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 h-full">
-                    <div
-                      className={`w-12 h-12 rounded-xl flex items-center justify-center transition-transform duration-300 group-hover:scale-110 ${
-                        index % 2 === 0 ? 'bg-brand-500/10' : 'bg-leaf-500/15'
-                      }`}
-                    >
-                      <Icon
-                        size={20}
-                        className={index % 2 === 0 ? 'text-brand-500' : 'text-leaf-600'}
-                      />
+              {t.values.items.map((label, index) => {
+                const Icon = valuesIcons[index];
+                return (
+                  <Reveal key={label} delay={index * 60}>
+                    <div className="group bg-white rounded-2xl p-6 flex flex-col items-center text-center gap-3 shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 h-full">
+                      <div
+                        className={`w-12 h-12 rounded-xl flex items-center justify-center transition-transform duration-300 group-hover:scale-110 ${
+                          index % 2 === 0 ? 'bg-brand-500/10' : 'bg-leaf-500/15'
+                        }`}
+                      >
+                        <Icon
+                          size={20}
+                          className={index % 2 === 0 ? 'text-brand-500' : 'text-leaf-600'}
+                        />
+                      </div>
+                      <span className="text-sm font-semibold text-gray-700 leading-snug">
+                        {label}
+                      </span>
                     </div>
-                    <span className="text-sm font-semibold text-gray-700 leading-snug">
-                      {label}
-                    </span>
-                  </div>
-                </Reveal>
-              ))}
+                  </Reveal>
+                );
+              })}
             </div>
           </div>
         </section>
@@ -498,22 +618,23 @@ export default function App() {
           <div className="max-w-6xl mx-auto">
             <Reveal className="text-center mb-10">
               <h2 className="font-display text-2xl sm:text-3xl font-bold text-brand-500">
-                Nos bénéficiaires
+                {t.beneficiaries.title}
               </h2>
-              <p className="mt-3 text-gray-500">
-                Nous intervenons auprès des populations les plus vulnérables.
-              </p>
+              <p className="mt-3 text-gray-500">{t.beneficiaries.subtitle}</p>
             </Reveal>
             <Reveal className="flex flex-wrap justify-center gap-3">
-              {beneficiaries.map(({ label, icon: Icon }) => (
-                <span
-                  key={label}
-                  className="inline-flex items-center gap-2 bg-brand-50 border border-brand-500/20 text-brand-500 font-medium text-sm px-5 py-2.5 rounded-full hover:bg-brand-500 hover:text-white hover:border-brand-500 transition-colors duration-200"
-                >
-                  <Icon size={15} />
-                  {label}
-                </span>
-              ))}
+              {t.beneficiaries.items.map((label, index) => {
+                const Icon = beneficiariesIcons[index];
+                return (
+                  <span
+                    key={label}
+                    className="inline-flex items-center gap-2 bg-brand-50 border border-brand-500/20 text-brand-500 font-medium text-sm px-5 py-2.5 rounded-full hover:bg-brand-500 hover:text-white hover:border-brand-500 transition-colors duration-200"
+                  >
+                    <Icon size={15} />
+                    {label}
+                  </span>
+                );
+              })}
             </Reveal>
           </div>
         </section>
@@ -532,13 +653,10 @@ export default function App() {
                 <img src="/image.png" alt="HUMAN-DEV" className="h-10 w-10 object-contain opacity-90" />
                 <div>
                   <p className="text-white font-bold text-sm">Association HUMAN-DEV</p>
-                  <p className="text-xs">Au service de l'humanité</p>
+                  <p className="text-xs">{t.footer.tagline}</p>
                 </div>
               </div>
-              <p className="text-sm leading-relaxed">
-                Association humanitaire et de développement basée à Maroua, au service des
-                communautés vulnérables de l'Extrême-Nord du Cameroun.
-              </p>
+              <p className="text-sm leading-relaxed">{t.footer.description}</p>
               <div className="flex items-center gap-3 mt-5">
                 {socials.map(({ label, href, Icon }) => (
                   <a
@@ -557,7 +675,7 @@ export default function App() {
             </div>
 
             <div>
-              <p className="text-white font-semibold text-sm mb-4">Navigation</p>
+              <p className="text-white font-semibold text-sm mb-4">{t.footer.navTitle}</p>
               <div className="grid grid-cols-2 gap-2 text-sm">
                 {navLinks.map(([label, id]) => (
                   <button
@@ -572,17 +690,19 @@ export default function App() {
             </div>
 
             <div>
-              <p className="text-white font-semibold text-sm mb-4">Informations légales</p>
+              <p className="text-white font-semibold text-sm mb-4">{t.footer.legalTitle}</p>
               <p className="text-sm leading-relaxed">
-                Récépissé N°028/2026/RDA/K22/SAAJP
+                {t.footer.legalReceipt}
                 <br />
-                Siège social : Maroua, Cameroun
+                {t.footer.legalSiege}
               </p>
             </div>
           </div>
 
           <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 pt-6 text-xs">
-            <p>&copy; {new Date().getFullYear()} HUMAN-DEV. Tous droits réservés.</p>
+            <p>
+              &copy; {new Date().getFullYear()} HUMAN-DEV. {t.footer.copyright}
+            </p>
             <AdminLogin />
           </div>
         </footer>
