@@ -13,6 +13,8 @@ import {
 import Reveal from './Reveal';
 import { useLanguage } from '../context/LanguageContext';
 
+const GOOGLE_MAPS_URL = 'https://www.google.com/maps/search/?api=1&query=10.597173,14.341858';
+
 const socials = [
   {
     label: 'LinkedIn',
@@ -112,15 +114,23 @@ export default function ContactSection() {
 
             <div className="space-y-4">
               {/* Siege */}
-              <div className="group flex items-start gap-4 bg-white rounded-2xl p-4 border border-gray-100 hover:border-brand-100 hover:shadow-md transition-all duration-300">
+              <a
+                href={GOOGLE_MAPS_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                title={t.contact.viewOnMaps}
+                className="group flex items-start gap-4 bg-white rounded-2xl p-4 border border-gray-100 hover:border-brand-500 hover:shadow-md transition-all duration-300"
+              >
                 <div className="w-11 h-11 rounded-xl bg-brand-50 flex items-center justify-center flex-shrink-0 group-hover:bg-brand-500 transition-colors duration-300">
                   <MapPin size={18} className="text-brand-500 group-hover:text-white transition-colors duration-300" />
                 </div>
                 <div>
                   <p className="font-semibold text-gray-800 text-sm">{t.contact.siegeLabel}</p>
-                  <p className="text-brand-500 text-sm mt-0.5">{t.contact.siegeValue}</p>
+                  <p className="text-brand-500 text-sm mt-0.5 group-hover:underline">
+                    {t.contact.siegeValue}
+                  </p>
                 </div>
-              </div>
+              </a>
 
               {/* Phone */}
               <div className="group flex items-start gap-4 bg-white rounded-2xl p-4 border border-gray-100 hover:border-brand-100 hover:shadow-md transition-all duration-300">
@@ -170,12 +180,20 @@ export default function ContactSection() {
               </div>
             </div>
 
-            {/* Map placeholder */}
-            <div className="rounded-2xl bg-sand-100 p-8 flex flex-col items-center justify-center gap-3 min-h-[160px] border border-sand-200">
+            {/* Map link */}
+            <a
+              href={GOOGLE_MAPS_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group rounded-2xl bg-sand-100 hover:bg-sand-200 p-8 flex flex-col items-center justify-center gap-3 min-h-[160px] border border-sand-200 hover:border-brand-500 transition-colors duration-300"
+            >
               <MapPin size={36} className="text-brand-500" strokeWidth={1.5} />
               <p className="font-bold text-brand-500 text-base">{t.contact.mapCity}</p>
               <p className="text-sm text-gray-500">{t.contact.mapRegion}</p>
-            </div>
+              <span className="text-xs font-semibold text-brand-500 group-hover:underline">
+                {t.contact.viewOnMaps}
+              </span>
+            </a>
           </Reveal>
 
           {/* Right — Form */}
